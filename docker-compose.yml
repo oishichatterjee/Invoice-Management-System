@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: DockerFile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/invoices
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: DockerFile 
+    ports:
+      - "3000:80"
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: oishi
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

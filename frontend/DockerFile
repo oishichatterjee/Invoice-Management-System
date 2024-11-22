@@ -1,0 +1,29 @@
+# Use an official Node.js image as the base
+FROM node:18-alpine
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to leverage Docker cache
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the application code
+COPY . .
+
+# Build the React app
+RUN npm run build
+
+# Use an official NGINX image to serve the built React app
+FROM nginx:alpine
+
+# Copy the build output to NGINX's default directory
+COPY --from=0 /app/build /usr/share/nginx/html
+
+# Expose the default NGINX port
+EXPOSE 80
+
+# Start NGINX
+CMD ["nginx", "-g", "daemon off;"]
